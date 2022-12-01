@@ -6,5 +6,4 @@
 
 using namespace std;
 
-void permuteString(string, int, int);
-
+queue<string> getBinaryNum(int);
