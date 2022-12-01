@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 #include <bitset>
-#include <queue>
+#include <list>
 #include "permuteString.h"
 #include "getBinaryNum.h"
 #include "combinateString.h"
@@ -10,9 +10,11 @@
 using namespace std;
 
 int main() {
+	
 	// variable declaration
-	string str, strToPermute;
+	string str, strToPermute, line1, line2;
 	int nPerm, strSize, arraySize;
+	queue<string> anagrams;
 
 	// clear text file
 	ofstream file;
@@ -23,17 +25,14 @@ int main() {
 	file.close();
 	
 	// getting a string
-	cout << "Input string to permute: ";
+	cout << "Input string to find it's anagrams: ";
 	cin >> str;
 
-	strSize = str.length();
+	for (int i = 0; i < str.length(); i++) {
+		str[i] = tolower(str[i]);
+	}
 
-	/*
-	// handling the permutations
-	nPerm = str.size();
-	permuteString(str,0,nPerm-1);
-	*/
-	
+	strSize = str.length();
 
 	// handling the combinations
 	int numBinNums = pow(2, strSize);
@@ -42,12 +41,48 @@ int main() {
 	combinateString(str, binaryQ);
 	
 	// setting up file for read
-	ifstream infile("Combinations_List.txt");
+	ifstream combfile("Combinations_List.txt");
 
 	// reading line by line and permuting
-	for (string line; getline(infile, line);) {
+	for (string line; getline(combfile, line);) {
 		nPerm = line.size();
 		permuteString(line, 0, nPerm - 1);
+	}
+
+	combfile.close();
+	
+	
+	ifstream oxfordfile;
+	oxfordfile.open("The_Oxford_3000.txt");
+	int charbug = 0;
+
+	while (!oxfordfile.eof()) {
+		getline(oxfordfile, line1);
+
+		if (charbug == 0) {
+			charbug++;
+			continue;
+		}
+		
+		ifstream permfile;
+		permfile.open("Permutations_List.txt");
+
+		while (!permfile.eof()) {
+			getline(permfile, line2);
+			if (line1 == line2) {
+				anagrams.push(line1);
+			}
+		}
+		
+		permfile.close();
+	}
+
+	cout << endl;
+	cout << "The following anagrams were found:" << endl;
+
+	while (!anagrams.empty()) {
+		cout << anagrams.front() << endl;
+		anagrams.pop();
 	}
 
 	return 0;
